@@ -1,58 +1,74 @@
-# 💿 Retro Media Screensaver
+# 💿 DVD-nostalgic-animation
 
-A nostalgic, high-performance bouncing logo simulation built entirely in C++. This project pays homage to late-90s hardware aesthetics, featuring a custom visual identity inspired by classic optical media layouts.
+[![License: MIT](https://shields.io)](https://opensource.org)
 
-## 🚀 Features
+A C++ Raylib project dedicated to honoring the classic DVD screensaver from the 1990s to the 2000s. This project combines high-performance native code with a custom visual identity inspired by vintage optical media layouts.
 
-* 📺 **Mathematical Precision:** Perfectly tracks boundary collisions for satisfying corner hits.
-* ⚡ **Zero Dependencies:** Built entirely with raw, native code for maximum performance.
+<p align="center">
+  <img src="Images/dvd.png" alt="Custom Horizon Logo" width="350"/>
+</p>
+
+## 🎨 Visual Identity
+
+The project features a unique visual identity created in Canva:
+* **Typography:** Uses the bold, geometric, futuristic lines of the **Horizon** typeface.
+* **The Twist:** Features a custom stylized adaptation instead of a generic standard layout.
 
 ---
 
-## 🛠️ Installation & Quick Start
+## 🚀 Features
 
-Since this project is written in C++, you will need a C++ compiler installed on your local machine to build and run the source code.
+* 📺 **Native Raylib Rendering:** Uses the lightweight Raylib hardware-accelerated graphics library.
+* 📐 **Mathematical Precision:** Tracks boundary collisions smoothly for highly satisfying corner hits.
+* 🎨 **Dynamic Color Shifting:** The custom logo dynamically changes color themes upon every wall collision.
+
+---
+
+## 🛠️ Installation & Compilation
 
 ### Prerequisites
 
-You must have a modern C++ compiler installed. Choose the appropriate version for your operating system:
+To compile and run this project, you must have a C++ compiler (`g++` or `clang`) and the **Raylib development library** installed on your system.
 
-* **Windows:** [MinGW-w64](https://msys2.org) (via MSYS2)
-* **Mac:** Clang (Installed automatically via Xcode Command Line Tools)
-* **Linux:** GCC (`g++`)
+* **macOS:** Install via Homebrew: `brew install raylib`
+* **Linux (Ubuntu/Debian):** Install via APT: `sudo apt install libraylib-dev`
+* **Windows:** Follow the setup guide on the [Raylib Wiki](https://github.com) for your preferred toolchain (MinGW/w64 or Visual Studio).
 
-### Setup Instructions
+### Setup & Build Instructions
 
 1. **Clone the repository** to your local machine:
    ```bash
    git clone https://github.com
    ```
 
-2. **Navigate** into the project folder:
+2. **Navigate** into the project directory:
    ```bash
    cd DVD-nostalgic-animation
    ```
 
-3. **Compile the source code** using your preferred compiler:
+3. **Compile the source code** using the appropriate Raylib linking flags for your operating system:
 
-   * **Using GCC / MinGW:**
+   * **Linux:**
      ```bash
-     g++ main.cpp -o dvd_screensaver
+     g++ main.cpp -o screensaver -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
      ```
-   * **Using Clang:**
+   * **macOS:**
      ```bash
-     clang++ main.cpp -o dvd_screensaver
+     g++ main.cpp -o screensaver -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+     ```
+   * **Windows (MinGW):**
+     ```bash
+     g++ main.cpp -o screensaver.exe -lraylib -lopengl32 -lgdi32 -lwinmm
      ```
 
-4. **Launch the project** by running the compiled executable:
-
+4. **Run the executable:**
    * **Windows:**
      ```bash
-     dvd_screensaver.exe
+     screensaver.exe
      ```
-   * **Mac/Linux:**
+   * **Mac / Linux:**
      ```bash
-     ./dvd_screensaver
+     ./screensaver
      ```
 
 ---
