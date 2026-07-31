@@ -1,4 +1,4 @@
-name: Deploy C++ Project to GitHub Pages
+name: Deploy Raylib C++ Project to GitHub Pages
 
 on:
   push:
@@ -24,27 +24,50 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 1: Install and configure Emscripten to compile C++ into WASM
+      # Step 1: Install Ubuntu package dependencies required to build Raylib
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lib x11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libasound2-dev
+
+      # Step 2: Set up the Emscripten Compiler Environment
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
 
-      # Step 2: Create a deployment directory and compile main.cpp to index.html
-      - name: Compile C++ to WebAssembly
+      # Step 3: Fetch and extract the official WebAssembly release of Raylib
+      - name: Download Raylib WebAssembly Library
+        run: |
+          curl -sL https://github.com/raysan5/raylib/releases/download/5.0/raylib-5.0_webassembly.zip -o raylib_web.zip
+          unzip raylib_web.zip -d raylib_wasm
+
+      # Step 4: Create our website distribution folder and compile main.cpp
+      - name: Compile C++ to WebAssembly with Raylib
         run: |
           mkdir -p build_site
-          emcc main.cpp -o build_site/index.html -s WASM=1 --shell-file default
+          emcc main.cpp -o build_site/index.html \
+            -I ./raylib_wasm/raylib-5.0_webassembly/include \
+            -L ./raylib_wasm/raylib-5.0_webassembly/lib \
+            -lraylib \
+            -s USE_GLFW=3 \
+            -s GL_ENABLE_GET_PROC_ADDRESS=1 \
+            -s WASM=1 \
+            --shell-file ./raylib_wasm/raylib-5.0_webassembly/src/shell.html
 
-      # Step 3: Configure Pages metadata
+      # Step 5: Check if you have custom local assets to include (uncomment if you add fonts or textures)
+      # - name: Include Assets
+      #   run: cp -r Images build_site/
+
+      # Step 6: Initialize GitHub Pages setup
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Step 4: Upload ONLY the compiled web assets folder
+      # Step 7: Bundle and upload only the build folder
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './build_site'
 
-      # Step 5: Publish the site live on GitHub Pages
+      # Step 8: Push the final build to the live web address
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
