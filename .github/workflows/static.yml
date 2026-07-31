@@ -10,64 +10,49 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 1: Install Ubuntu package dependencies required to build Raylib
+      # Install necessary graphics and emsdk build tools
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y lib x11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libasound2-dev
+          sudo apt-get install -y libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libasound2-dev
 
-      # Step 2: Set up the Emscripten Compiler Environment
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
 
-      # Step 3: Fetch and extract the official WebAssembly release of Raylib
+      # Download and build Raylib
       - name: Download Raylib WebAssembly Library
         run: |
-          curl -sL https://github.com/raysan5/raylib/releases/download/5.0/raylib-5.0_webassembly.zip -o raylib_web.zip
-          unzip raylib_web.zip -d raylib_wasm
+          curl -sL https://github.com -o raylib_web.zip
+          mkdir -p raylib_wasm
+          unzip -o raylib_web.zip -d raylib_wasm/
 
-      # Step 4: Create our website distribution folder and compile main.cpp
+      # Compile to WASM with asset embedding
       - name: Compile C++ to WebAssembly with Raylib
         run: |
           mkdir -p build_site
+          LIB_DIR=$(find raylib_wasm -type d -name "lib" | head -n 1)
+          INC_DIR=$(find raylib_wasm -type d -name "include" | head -n 1)
           emcc main.cpp -o build_site/index.html \
-            -I ./raylib_wasm/raylib-5.0_webassembly/include \
-            -L ./raylib_wasm/raylib-5.0_webassembly/lib \
-            -lraylib \
-            -s USE_GLFW=3 \
-            -s GL_ENABLE_GET_PROC_ADDRESS=1 \
-            -s WASM=1 \
-            --shell-file ./raylib_wasm/raylib-5.0_webassembly/src/shell.html
+            -I$INC_DIR -L$LIB_DIR -lraylib \
+            -s USE_GLFW=3 -s WASM=1 \
+            --preload-file Images@Images \
+            -s ALLOW_MEMORY_GROWTH=1
 
-      # Step 5: Check if you have custom local assets to include (uncomment if you add fonts or textures)
-      # - name: Include Assets
-      #   run: cp -r Images build_site/
-
-      # Step 6: Initialize GitHub Pages setup
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      # Step 7: Bundle and upload only the build folder
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './build_site'
 
-      # Step 8: Push the final build to the live web address
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
