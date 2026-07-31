@@ -24,6 +24,7 @@ int main() {
     int dvd_width = 230;
     int dvd_height = 110;
     InitWindow(1200, 800, "DVD nostalgia");
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     SetTargetFPS(60);
     Texture2D dvd = LoadTexture("Images/dvd.png");
     while (WindowShouldClose() == false) {
