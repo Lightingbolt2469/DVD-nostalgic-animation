@@ -1,56 +1,58 @@
 # 💿 Retro Media Screensaver
 
-[![License: MIT](https://shields.io)](https://opensource.org)
-
-A nostalgic, high-performance bouncing logo simulation built entirely with standard web technologies. This project pays homage to late-90s hardware aesthetics, featuring a custom visual identity inspired by classic optical media layouts.
-
-<p align="center">
-  <!-- Replace with your actual Canva logo path once uploaded to GitHub -->
-  <img src="assets/logo.png" alt="Custom Horizon Logo" width="350"/>
-</p>
-
-## 🎨 Visual Identity
-
-The project features a unique visual identity created in Canva:
-* **Typography:** Uses the bold, geometric, futuristic lines of the **Horizon** typeface.
-* **The Twist:** Features a custom [describe your twist, e.g., code bracket geometry / neon styling] instead of a standard generic layout.
-
----
+A nostalgic, high-performance bouncing logo simulation built entirely in C++. This project pays homage to late-90s hardware aesthetics, featuring a custom visual identity inspired by classic optical media layouts.
 
 ## 🚀 Features
 
 * 📺 **Mathematical Precision:** Perfectly tracks boundary collisions for satisfying corner hits.
-* ⚡ **Zero Dependencies:** Built entirely with raw, vanilla code for maximum speed.
-* 🎨 **Dynamic Color Shifting:** The custom logo randomly changes color themes upon every wall bounce.
+* ⚡ **Zero Dependencies:** Built entirely with raw, native code for maximum performance.
 
 ---
 
 ## 🛠️ Installation & Quick Start
 
-Since this project is built using native web technologies, it requires no compilers, package managers, or external installations. You can run it locally in seconds.
+Since this project is written in C++, you will need a C++ compiler installed on your local machine to build and run the source code.
 
 ### Prerequisites
-* Any modern web browser (Google Chrome, Mozilla Firefox, Microsoft Edge, or Safari).
-* Git installed on your local machine (optional).
+
+You must have a modern C++ compiler installed. Choose the appropriate version for your operating system:
+
+* **Windows:** [MinGW-w64](https://msys2.org) (via MSYS2)
+* **Mac:** Clang (Installed automatically via Xcode Command Line Tools)
+* **Linux:** GCC (`g++`)
 
 ### Setup Instructions
 
-1. **Clone the repository** to your local machine using Git:
+1. **Clone the repository** to your local machine:
    ```bash
    git clone https://github.com
    ```
-   *(Alternatively, click the green **Code** button at the top right of this page and select **Download ZIP**, then extract it).*
 
 2. **Navigate** into the project folder:
    ```bash
-   cd YOUR-REPO-NAME
+   cd DVD-nostalgic-animation
    ```
 
-3. **Launch the project** by opening the main file directly in your web browser:
-   * **Windows:** Double-click `index.html` inside your file explorer.
-   * **Mac/Linux:** Run the following command in your terminal:
+3. **Compile the source code** using your preferred compiler:
+
+   * **Using GCC / MinGW:**
      ```bash
-     open index.html
+     g++ main.cpp -o dvd_screensaver
+     ```
+   * **Using Clang:**
+     ```bash
+     clang++ main.cpp -o dvd_screensaver
+     ```
+
+4. **Launch the project** by running the compiled executable:
+
+   * **Windows:**
+     ```bash
+     dvd_screensaver.exe
+     ```
+   * **Mac/Linux:**
+     ```bash
+     ./dvd_screensaver
      ```
 
 ---
