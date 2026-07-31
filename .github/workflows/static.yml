@@ -11,14 +11,12 @@ permissions:
   id-token: write
 
 env:
-  # Instructs the runner to allow actions utilizing older Node versions during the transition
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # Updated to v4.2.2 or later to align with Node 24 standards
       - name: Checkout Repository
         uses: actions/checkout@v4.2.2
 
@@ -30,10 +28,11 @@ jobs:
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
 
+      # Downloads the actual Raylib web library binaries from their releases page
       - name: Download Raylib WebAssembly Library
         run: |
-          curl -sL https://github.com -o raylib_web.zip
           mkdir -p raylib_wasm
+          curl -sL "https://github.com" -o raylib_web.zip
           unzip -o raylib_web.zip -d raylib_wasm/
 
       - name: Compile C++ to WebAssembly with Raylib
@@ -42,9 +41,8 @@ jobs:
           LIB_DIR=$(find raylib_wasm -type d -name "lib" | head -n 1)
           INC_DIR=$(find raylib_wasm -type d -name "include" | head -n 1)
           
-          # Added SINGLE_FILE=1 to merge HTML, JS, and WASM into one deliverable page
           emcc main.cpp -o build_site/index.html \
-            -I$INC_DIR -L$LIB_DIR -lraylib \
+            -I"$INC_DIR" -L"$LIB_DIR" -lraylib \
             -s USE_GLFW=3 -s WASM=1 \
             -s SINGLE_FILE=1 \
             --preload-file Images@Images \
