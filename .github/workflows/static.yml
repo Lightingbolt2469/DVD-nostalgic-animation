@@ -32,6 +32,7 @@ jobs:
           git clone --depth 1 https://github.com/raysan5/raylib.git raylib_src
           cd raylib_src/src
           make PLATFORM=PLATFORM_WEB EMSDK_PATH="$EMSDK" -B
+          cp libraylib.web.a libraylib.a
 
       - name: Compile C++ to WebAssembly with Raylib
         run: |
