@@ -10,43 +10,39 @@ permissions:
   pages: write
   id-token: write
 
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4.2.2
 
-      - name: Install System Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libasound2-dev
-
       - name: Setup Emscripten
         uses: mymindstorm/setup-emsdk@v14
 
-      # Downloads the actual Raylib web library binaries from their releases page
-      - name: Download Raylib WebAssembly Library
+      - name: Clone and Build Raylib for Web
         run: |
-          mkdir -p raylib_wasm
-          curl -sL "https://github.com" -o raylib_web.zip
-          unzip -o raylib_web.zip -d raylib_wasm/
+          git clone --depth 1 https://github.com/raysan5/raylib.git raylib_src
+          cd raylib_src/src
+          make PLATFORM=PLATFORM_WEB EMSDK_PATH="$EMSDK" -B
 
       - name: Compile C++ to WebAssembly with Raylib
         run: |
           mkdir -p build_site
-          LIB_DIR=$(find raylib_wasm -type d -name "lib" | head -n 1)
-          INC_DIR=$(find raylib_wasm -type d -name "include" | head -n 1)
-          
           emcc main.cpp -o build_site/index.html \
-            -I"$INC_DIR" -L"$LIB_DIR" -lraylib \
+            -I raylib_src/src -L raylib_src/src -lraylib \
             -s USE_GLFW=3 -s WASM=1 \
             -s SINGLE_FILE=1 \
             --preload-file Images@Images \
-            -s ALLOW_MEMORY_GROWTH=1
+            -s ALLOW_MEMORY_GROWTH=1 \
+            --shell-file raylib_src/src/minshell.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
