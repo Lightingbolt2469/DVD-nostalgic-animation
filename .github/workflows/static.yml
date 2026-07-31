@@ -1,0 +1,50 @@
+name: Deploy C++ Project to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 1: Install and configure Emscripten to compile C++ into WASM
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+
+      # Step 2: Create a deployment directory and compile main.cpp to index.html
+      - name: Compile C++ to WebAssembly
+        run: |
+          mkdir -p build_site
+          emcc main.cpp -o build_site/index.html -s WASM=1 --shell-file default
+
+      # Step 3: Configure Pages metadata
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Step 4: Upload ONLY the compiled web assets folder
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './build_site'
+
+      # Step 5: Publish the site live on GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
